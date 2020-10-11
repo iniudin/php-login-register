@@ -23,4 +23,26 @@ class Database {
 
         return self::$_instance;
     }
+
+    public function insert($table, $fields = array()) {
+        $column = implode(", ", array_keys($fields));
+
+        $valueArrays = array();
+        $i = 0;
+        foreach ($fields as $key => $value) {
+            if( is_int($value) ) {
+                $valueArrays[$i] = $value;
+            } else {
+                $valueArrays[$i] = "'". $value . "'";
+            }
+            $i++;
+        }
+
+        $values = implode(", ", $valueArrays);
+
+        $query = "INSERT INTO $table ($column) VALUES ($values)";
+        // die($query);
+        if($this->mysqli->query($query)) return true;
+        else return false;
+    }
 }
