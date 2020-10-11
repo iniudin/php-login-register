@@ -31,9 +31,9 @@ class Database {
         $i = 0;
         foreach ($fields as $key => $value) {
             if( is_int($value) ) {
-                $valueArrays[$i] = $value;
+                $valueArrays[$i] = $this->escape($value);
             } else {
-                $valueArrays[$i] = "'". $value . "'";
+                $valueArrays[$i] = "'". $this->escape($value) . "'";
             }
             $i++;
         }
@@ -41,8 +41,16 @@ class Database {
         $values = implode(", ", $valueArrays);
 
         $query = "INSERT INTO $table ($column) VALUES ($values)";
-        // die($query);
+        
+        return $this->run_query($query, 'Masalah saat input data.');
+    }
+
+    public function run_query($query, $msg) {
         if($this->mysqli->query($query)) return true;
-        else return false;
+        else return die($msg);
+    }
+    
+    public function escape($name) {
+        return $this->mysqli->real_escape_string($name);
     }
 }
